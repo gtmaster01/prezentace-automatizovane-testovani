@@ -1,0 +1,46 @@
+AUTOMATIZOVANÉ TESTOVÁNÍ — prezentace na cca 15 minut
+=====================================================
+
+SPUŠTĚNÍ
+  Otevři prezentace.html dvojklikem, nejlépe v Chrome nebo Edge.
+  Funguje offline, 3D knihovna i písma jsou uvnitř souboru.
+  F = celá obrazovka.
+
+OVLÁDÁNÍ
+  → / mezerník / PageDown / klikátko   další krok nebo slide
+  ← / PageUp                           zpět
+  N            poznámky pro řečníka a časomíra (T ji vynuluje)
+  B nebo .     zatemnit plátno
+  H            nápověda
+  P / R        video: pauza / od začátku
+  Home / End   první / poslední slide
+
+  Tři slidy se odkrývají po krocích (tečky vedle čísla slidu vlevo dole):
+  Vývoj (5 kroků), Jak to funguje (4), Den testera (6).
+
+VIDEO Z PRAXE (slide 8)
+  Ulož video jako  video/ukazka.mp4  (složka video je vedle prezentace.html).
+  Nebo ho na slidu přetáhni myší do okna prohlížeče (platí do zavření okna).
+  Rám telefonu se přizpůsobí videu na výšku i na šířku.
+  Video běží bez zvuku a ve smyčce, klik na něj = pauza.
+
+  Nejjistější formát je MP4 (H.264). Převod třeba z .mov z iPhonu:
+    ffmpeg -i vstup.mov -c:v libx264 -pix_fmt yuv420p -crf 20 -an video/ukazka.mp4
+
+ÚPRAVY TEXTŮ
+  Otevři prezentace.html v textovém editoru a najdi text.
+  Každý slide je <section class="slide">, poznámky jsou v <aside class="notes">.
+  3D scény a vzhled se upravují ve složce _zdroj (viz _zdroj/README.txt).
+
+KDYŽ NĚCO NEJDE
+  Bez 3D (starý počítač, vypnutá grafika) prezentace běží dál, jen bez 3D scény.
+  Na pomalém počítači si sama sníží rozlišení 3D, případně vypne záři.
+  Nejlíp vypadá ve Full HD (1920 × 1080), funguje ale i na 16:10 a 4:3.
+
+ČASOVÝ PLÁN (celkem 14:55)
+   1 Titul             0:40     7 Jak vypadá test     1:15
+   2 Proč testujeme    1:00     8 Ukázka z praxe      2:00
+   3 Regrese           1:15     9 Noční směna         1:00
+   4 Myšlenka          1:15    10 Den testera         1:45
+   5 Vývoj             1:30    11 Jak začít           1:00
+   6 Jak to funguje    1:30    12 Díky a otázky       0:45

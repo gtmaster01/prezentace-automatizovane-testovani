@@ -1,0 +1,7 @@
+# Video z praxe do veřejného repa nepatří (záznam skutečné aplikace)
+video/*
+!video/README.txt
+
+# systém a nástroje
+.DS_Store
+node_modules/

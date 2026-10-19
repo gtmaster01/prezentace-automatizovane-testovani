@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automatizované testování: kdo kliká, když všichni spí</title>
+<!--
+  PREZENTACE: Automatizované testování (pro studenty, cca 15 minut)
+
+  Ovládání:  → / mezerník / PageDown = dál,  ← / PageUp = zpět,
+             F = celá obrazovka, N = poznámky a časomíra, B = zatemnit, H = nápověda
+  Video:     ulož ho jako  video/ukazka.mp4  vedle tohoto souboru,
+             nebo ho přetáhni myší do okna prohlížeče.
+
+  Texty slidů se dají upravit přímo tady v HTML (hledej <section class="slide">).
+  3D scénu a animace řídí skript na konci souboru. Zdrojáky jsou v _zdroj/.
+-->
+<style>
+/*__CSS__*/
+</style>
+</head>
+<body>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="tap" id="tap" aria-hidden="true"></div>
+
+<main class="stage" id="stage">
+
+  <!-- ============ 1. TITUL ============ -->
+  <section class="slide" data-act="title" data-time="40">
+    <div class="col col--title">
+      <h1 class="display" data-split>Automatizované testování</h1>
+      <p class="lead lead--xl reveal" style="--d:6">aneb kdo kliká, když všichni spí</p>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Představ se: kdo jsi a co děláš.</li>
+        <li>Plán na 15 minut: proč testujeme, jak funguje automat a co dělá automatizovaný tester.</li>
+        <li>Telefon vpravo zrovna testuje robot. Nikdo na něj nesahá.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ============ 2. PROČ TESTUJEME ============ -->
+  <section class="slide" data-act="bars" data-time="60">
+    <div class="col">
+      <h2 class="title" data-split>Chybu vždycky někdo najde.</h2>
+      <p class="lead reveal" style="--d:4">Jde jen o to, jestli my, nebo zákazník.</p>
+      <ul class="ladder">
+        <li class="reveal" style="--d:6; --c: var(--c1)"><span><b>V návrhu</b> škrtnete jednu větu.</span></li>
+        <li class="reveal" style="--d:7; --c: var(--c2)"><span><b>Ve vývoji</b> přepíšete pár řádků.</span></li>
+        <li class="reveal" style="--d:8; --c: var(--c3)"><span><b>V testování</b> opravíte a otestujete znovu.</span></li>
+        <li class="reveal" style="--d:9; --c: var(--c4)"><span><b>V produkci</b> volají naštvaní klienti.</span></li>
+      </ul>
+    </div>
+    <div class="anchors">
+      <span class="tag tag--bar">návrh</span>
+      <span class="tag tag--bar">vývoj</span>
+      <span class="tag tag--bar">testování</span>
+      <span class="tag tag--bar is-hot">produkce</span>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Otázka do sálu: kdo už narazil na chybu v aplikaci?</li>
+        <li>Chyby jsou vždycky. Jde o to, kdo je najde první.</li>
+        <li>Sloupce: čím později chybu najdeme, tím víc stojí. V produkci peníze, čas i důvěru klientů.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ============ 3. RUČNĚ TO NESTÍHÁME ============ -->
+  <section class="slide" data-act="wall" data-mode="manual" data-time="75">
+    <div class="col">
+      <h2 class="title" data-split>Každá nová verze = otestovat všechno znovu</h2>
+      <div class="calc reveal" style="--d:5">
+        <span class="num"><b data-count="500">500</b><small>scénářů</small></span>
+        <span class="op">×</span>
+        <span class="num"><b data-count="3">3</b><small>minuty</small></span>
+        <span class="op">×</span>
+        <span class="num"><b data-count="2">2</b><small>platformy</small></span>
+      </div>
+      <div class="calc-result reveal" style="--d:8">
+        <span class="op">=</span><b data-count="50">50</b><span>hodin klikání</span>
+      </div>
+      <p class="reveal" style="--d:10">Nová funkce umí rozbít starou. Proto se po každé změně kontroluje všechno. Říká se tomu <span class="term">regresní testování</span>.</p>
+      <p class="small reveal" style="--d:11">A nová verze vychází třeba každé dva týdny.</p>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Spočítej to s nimi: 500 scénářů × 3 minuty × 2 platformy (Android a iOS) = 50 hodin.</li>
+        <li>To je víc než pracovní týden jednoho člověka. A to při každé nové verzi.</li>
+        <li>Regrese: nová funkce rozbije něco, co dřív fungovalo.</li>
+        <li>Vpravo: jantarová dlaždice je člověk, který jede scénář po scénáři.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ============ 4. MYŠLENKA ============ -->
+  <section class="slide" data-act="wall" data-mode="robot" data-time="75">
+    <div class="col">
+      <h2 class="title" data-split>Myšlenka: naučme počítač klikat za nás</h2>
+      <div class="duo">
+        <div class="who who--human reveal" style="--d:5">
+          <h3>Člověk</h3>
+          <p>Přemýšlí a všimne si i věcí, které nikdo nečekal. Po stém opakování ho to ale nebaví a chyba mu uteče.</p>
+        </div>
+        <div class="who who--robot reveal" style="--d:7">
+          <h3>Robot</h3>
+          <p>Nenudí se, je přesný a pracuje i v noci. Udělá ale jen to, co mu napíšete.</p>
+        </div>
+      </div>
+      <p class="punch reveal" style="--d:10">Test napíšete jednou. Spustit ho můžete tisíckrát.</p>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Stejná zeď scénářů, teď ji projede robot. Paralelně, za zlomek času.</li>
+        <li>Červené dlaždice jsou nalezené chyby. Přesně kvůli nim to děláme.</li>
+        <li>Nejde o nahrazení testerů. Robot dělá nudné opakování, člověk přemýšlí a hledá nové chyby.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ============ 5. VÝVOJ ============ -->
+  <section class="slide" data-act="timeline" data-steps="5" data-time="90">
+    <div class="col">
+      <h2 class="title" data-split>Jak se testování vyvíjelo</h2>
+      <div class="eras reveal" style="--d:4">
+        <article class="era" data-step="0">
+          <p class="era-when">Odjakživa</p>
+          <h3>Ruční testování</h3>
+          <p>Člověk, seznam kroků a spousta klikání. Funguje to, ale pomalu.</p>
+        </article>
+        <article class="era" data-step="1">
+          <p class="era-when">90. léta</p>
+          <h3>Nahraj a přehraj</h3>
+          <p>Nástroj si zapamatuje kliknutí a pak je zopakuje. Stačí posunout tlačítko a test je rozbitý.</p>
+        </article>
+        <article class="era" data-step="2">
+          <p class="era-when">2004 a 2012</p>
+          <h3>Testy jako kód</h3>
+          <p>Selenium ovládá webový prohlížeč, Appium mobilní aplikace. Obojí je zdarma a open source.</p>
+        </article>
+        <article class="era" data-step="3">
+          <p class="era-when">Od roku 2010</p>
+          <h3>Testy běží samy</h3>
+          <p>Po každé změně v kódu se spustí automaticky. Na desítkách zařízení najednou.</p>
+        </article>
+        <article class="era" data-step="4">
+          <p class="era-when">Dnes</p>
+          <h3>Pomáhá umělá inteligence</h3>
+          <p>Navrhuje testy, opravuje rozbité kroky a třídí chyby. Rozhoduje pořád člověk.</p>
+        </article>
+      </div>
+    </div>
+    <div class="anchors">
+      <span class="tag tag--year">odjakživa</span>
+      <span class="tag tag--year">90. léta</span>
+      <span class="tag tag--year">2004 a 2012</span>
+      <span class="tag tag--year">od 2010</span>
+      <span class="tag tag--year">dnes</span>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Šipkou se posouváš po časové ose (5 zastávek), u každé stačí jedna věta.</li>
+        <li>Nahraj a přehraj: křehké, každá změna obrazovky test rozbila.</li>
+        <li>Selenium vzniklo v roce 2004 pro web, Appium kolem roku 2012 pro mobily. Na Appiu stojí i naše testy.</li>
+        <li>CI/CD: testy se pouští samy po každé změně. Dnes pomáhá AI, ale rozhoduje člověk.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ============ 6. JAK TO FUNGUJE ============ -->
+  <section class="slide" data-act="pipeline" data-steps="4" data-time="90">
+    <div class="top">
+      <h2 class="title" data-split>Jak to funguje</h2>
+      <p class="lead reveal" style="--d:4">Robot nemá ruce. Má Appium.</p>
+    </div>
+    <div class="anchors">
+      <div class="tag tag--station"><b><i>1</i>Test</b><span>Kroky napsané v kódu</span></div>
+      <div class="tag tag--station"><b><i>2</i>Appium</b><span>Překládá je pro telefon</span></div>
+      <div class="tag tag--station"><b><i>3</i>Telefon</b><span>Aplikace kroky provede</span></div>
+      <div class="tag tag--station"><b><i>4</i>Výsledek</b><span>Prošlo, nebo spadlo?</span></div>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Šipkou postupně odkryj 4 části.</li>
+        <li>Test: kroky v kódu, u nás Kotlin.</li>
+        <li>Appium je tlumočník. Test řekne „klepni na Odeslat“, Appium to přeloží pro Android nebo iOS.</li>
+        <li>Telefon: skutečný, nebo emulátor. Výsledek: prošlo / spadlo, se screenshotem a logem.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ============ 7. JAK VYPADÁ TEST ============ -->
+  <section class="slide" data-act="code" data-time="75">
+    <div class="col col--wide">
+      <h2 class="title" data-split>Jak vypadá test</h2>
+      <p class="lead reveal" style="--d:4">Jako recept: kroky a výsledek, který čekáme.</p>
+<pre class="code reveal" style="--d:6" id="codeBlock"><span class="ln"><span class="k">@Test</span></span><span class="ln"><span class="k">fun</span> <span class="r">sendPayment</span>() = <span class="r">testWith</span>(user) { app -&gt;</span><span class="ln" data-flow="0">    <span class="r">runStep</span>(<span class="h">"1. Otevřu novou platbu"</span>) { <span class="r">app.openNewPayment()</span> }</span><span class="ln" data-flow="1">    <span class="r">runStep</span>(<span class="h">"2. Zadám účet a 100 Kč"</span>) { <span class="r">payment.fill(account, 100)</span> }</span><span class="ln" data-flow="2">    <span class="r">runStep</span>(<span class="h">"3. Odešlu platbu"</span>)       { <span class="r">payment.send()</span> }</span><span class="ln" data-flow="3">    <span class="r">runStep</span>(<span class="h">"4. Ověřím potvrzení"</span>)    { <span class="r">result.shouldShow(</span>"Platba odeslána"<span class="r">)</span> }</span><span class="ln">}</span></pre>
+      <div class="code-foot reveal" style="--d:8">
+        <p class="legend">
+          <span style="--c: var(--human)"><i></i>Popis kroku pro lidi</span>
+          <span style="--c: #a8c6ff"><i></i>Příkaz pro robota</span>
+        </p>
+        <span class="verdict" id="verdict"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Test prošel</span>
+      </div>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Test je recept: kroky a výsledek, který čekáme.</li>
+        <li>Jantarový text čte člověk v reportu. Modrý je příkaz pro robota.</li>
+        <li>Zvýrazněný řádek běží právě teď na telefonu vpravo. Poslední krok je kontrola: bez ní by to nebyl test.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ============ 8. UKÁZKA Z PRAXE (video) ============ -->
+  <section class="slide" data-act="video" data-time="120" id="videoSlide">
+    <div class="col">
+      <h2 class="title" data-split>Ukázka z praxe</h2>
+      <p class="lead reveal" style="--d:4">Skutečný test, skutečná aplikace.</p>
+      <ul class="ticks">
+        <li class="reveal" style="--d:6">Telefonu se nikdo nedotýká.</li>
+        <li class="reveal" style="--d:7">Kroky jdou rychle za sebou, přesně podle scénáře.</li>
+        <li class="reveal" style="--d:8">Na konci test sám zkontroluje, že výsledek sedí.</li>
+      </ul>
+    </div>
+    <div class="device" id="device" title="Klik = pauza / přehrát">
+      <div class="device-screen">
+        <video id="demoVideo" muted playsinline loop preload="auto"></video>
+        <div class="device-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4-2.5z"/></svg>
+          <b>Sem patří video z praxe</b>
+          <span>Ulož ho jako <code>video/ukazka.mp4</code> vedle prezentace, nebo ho sem přetáhni myší.</span>
+        </div>
+        <div class="device-pause"></div>
+      </div>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Video jede samo a ve smyčce. Klik na telefon (nebo P) = pauza, R = od začátku.</li>
+        <li>Komentuj, co robot dělá: najde prvek, klepne, vyplní, ověří.</li>
+        <li>Zdůrazni, že tohle běží každou noc bez lidí.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ============ 9. NOČNÍ SMĚNA ============ -->
+  <section class="slide" data-act="farm" data-time="60" id="farmSlide">
+    <div class="col">
+      <h2 class="title" data-split>Noční směna</h2>
+      <p class="lead reveal" style="--d:3">Zatímco spíte, testy běží.</p>
+      <div class="clock reveal" style="--d:5" id="farmClock">23:00</div>
+      <ol class="night-steps">
+        <li class="reveal" style="--d:6"><time>22:00</time><span>Vývojáři dokončí novou verzi.</span></li>
+        <li class="reveal" style="--d:7"><time>23:00</time><span>Robot ji nainstaluje do telefonů a spustí testy.</span></li>
+        <li class="reveal" style="--d:8"><time>06:00</time><span>Hotovo. Výsledky čekají v reportu.</span></li>
+      </ol>
+    </div>
+    <div class="report" id="farmReport">
+      <h3>Ranní report</h3>
+      <div class="report-rows">
+        <div><b data-count="500">500</b><span>testů</span></div>
+        <div class="is-pass"><b data-count="486">486</b><span>prošlo</span></div>
+        <div class="is-fail"><b data-count="14">14</b><span>spadlo</span></div>
+      </div>
+      <p>Těch 14 ráno prozkoumá tester.</p>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Testy běží v noci na farmě telefonů a emulátorů. Hodiny ukazují zrychlenou noc.</li>
+        <li>Ráno čeká report. Těch 14 pádů je práce na ráno: chyba aplikace, nebo testu?</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ============ 10. DEN TESTERA ============ -->
+  <section class="slide" data-act="day" data-steps="6" data-time="105">
+    <div class="col">
+      <h2 class="title" data-split>Den automatizovaného testera</h2>
+      <p class="lead reveal" style="--d:4">Žádné celodenní klikání. Spíš programování, detektivka a týmová práce.</p>
+      <ol class="day reveal" style="--d:6">
+        <li data-step="0"><time>08:00</time><div><h3>Ranní report</h3><p>Co v noci spadlo? Projdu výsledky u kafe.</p></div></li>
+        <li data-step="1"><time>09:00</time><div><h3>Detektivka</h3><p>Je to chyba v aplikaci, nebo v testu? Zjistím, co se stalo.</p></div></li>
+        <li data-step="2"><time>10:30</time><div><h3>Hlášení chyby</h3><p>Vývojářům popíšu kroky a přiložím screenshot i log.</p></div></li>
+        <li data-step="3"><time>13:00</time><div><h3>Nové testy</h3><p>Píšu automatický test na novou funkci aplikace.</p></div></li>
+        <li data-step="4"><time>15:00</time><div><h3>Code review</h3><p>Kolegové kontrolují můj kód, já ten jejich.</p></div></li>
+        <li data-step="5" data-who="robot"><time>22:00</time><div><h3>Noční běh</h3><p>Testy jedou samy. Já jdu spát.</p></div></li>
+      </ol>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Šipkou procházíš den (6 zastávek). Slunce vpravo ukazuje čas.</li>
+        <li>Detektivka je nejzajímavější část: pád testu může být chyba aplikace, testu nebo prostředí.</li>
+        <li>Pointa: je to programátorská práce a kus detektivky, ne celodenní klikání.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ============ 11. JAK ZAČÍT ============ -->
+  <section class="slide" data-act="stairs" data-time="60">
+    <div class="col">
+      <h2 class="title" data-split>Chcete to zkusit? Jak začít</h2>
+      <ol class="steps">
+        <li class="reveal" style="--d:5"><span class="n">1</span><div><h3>Základy programování</h3><p>Java, Kotlin, Python nebo JavaScript. Na jazyku tolik nezáleží.</p></div></li>
+        <li class="reveal" style="--d:9"><span class="n">2</span><div><h3>Git</h3><p>Kód se píše v týmu a Git je jeho společná paměť.</p></div></li>
+        <li class="reveal" style="--d:13"><span class="n">3</span><div><h3>Vyzkoušejte si nástroje</h3><p>Playwright nebo Selenium na web, Appium na mobil. Všechno zdarma.</p></div></li>
+        <li class="reveal" style="--d:17"><span class="n">4</span><div><h3>Ptejte se „Co když…?“</h3><p>Co když zadám −100 Kč? Co když vypadne signál? To je testerské myšlení.</p></div></li>
+      </ol>
+    </div>
+    <div class="anchors">
+      <span class="tag tag--num">1</span>
+      <span class="tag tag--num">2</span>
+      <span class="tag tag--num">3</span>
+      <span class="tag tag--num">4</span>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Konkrétní první kroky, všechno je zdarma.</li>
+        <li>Testerské myšlení: neptám se „funguje to?“, ptám se „jak to rozbít?“.</li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- ============ 12. DÍKY ============ -->
+  <section class="slide" data-act="finale" data-time="45">
+    <div class="col col--title">
+      <h1 class="display" data-split>Díky!</h1>
+      <p class="lead lead--xl reveal" style="--d:4">Otázky?</p>
+      <p class="punch reveal" style="--d:7">Robot kliká. Tester přemýšlí.</p>
+    </div>
+    <aside class="notes">
+      <ul>
+        <li>Shrnutí jednou větou: robot kliká, tester přemýšlí.</li>
+        <li>Prostor pro otázky.</li>
+      </ul>
+    </aside>
+  </section>
+
+</main>
+
+<div class="labels" id="labels" aria-hidden="true"></div>
+
+<div class="progress" aria-hidden="true"><i id="progress"></i></div>
+<div class="counter" id="counter" aria-live="polite"></div>
+<nav class="nav" aria-label="Navigace">
+  <button type="button" data-nav="prev" aria-label="Předchozí"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button type="button" data-nav="next" aria-label="Další"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+</nav>
+
+<aside class="notes-panel" id="notesPanel">
+  <div class="np-meta" id="npMeta"></div>
+  <div class="np-body" id="npBody"></div>
+</aside>
+
+<div class="help" id="help">
+  <div class="help-card">
+    <h2>Ovládání</h2>
+    <dl>
+      <dt>→  mezerník  PageDown</dt><dd>další krok nebo slide</dd>
+      <dt>←  PageUp</dt><dd>zpět</dd>
+      <dt>F</dt><dd>celá obrazovka</dd>
+      <dt>N</dt><dd>poznámky a časomíra (T ji vynuluje)</dd>
+      <dt>B nebo .</dt><dd>zatemnit plátno</dd>
+      <dt>P / R</dt><dd>video: pauza / od začátku</dd>
+      <dt>Home / End</dt><dd>první / poslední slide</dd>
+    </dl>
+    <p>Video ulož jako video/ukazka.mp4 vedle prezentace, nebo ho přetáhni myší do okna. Zavřeš klávesou H.</p>
+  </div>
+</div>
+<div class="blackout" aria-hidden="true"></div>
+
+<script>
+/*!
+ * three.js (https://threejs.org), MIT License, Copyright © 2010-2025 three.js authors.
+ * Písma Bricolage Grotesque a JetBrains Mono: SIL Open Font License 1.1.
+ */
+/*__VENDOR__*/
+</script>
+<script>
+/*__APP__*/
+</script>
+</body>
+</html>
