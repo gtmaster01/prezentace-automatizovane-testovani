@@ -2,7 +2,7 @@
    TELEFON — 3D model a simulovaná bankovní aplikace na displeji
    Displej je 2D canvas (návrh v souřadnicích 600 × 1290) použitý jako
    textura. Celý průchod testem je čistá funkce času t ∈ <0, FLOW_LEN),
-   takže se s ním dá synchronizovat kód na slidu 7 i impulzy na slidu 6.
+   takže se s ním dá synchronizovat kód na slidu 6 i impulzy na slidu 5.
    ========================================================================== */
 
 const FLOW_LEN = 9.6;
@@ -14,7 +14,7 @@ const TAPS = [
   { t: 5.05, x: 300, y: 1136 }, // „Odeslat platbu“
   { t: 8.15, x: 300, y: 1136 }, // „Hotovo“
 ];
-/** Kroky testu (shodné s runStep na slidu 7): [začátek, konec). */
+/** Kroky testu (shodné s runStep na slidu 6): [začátek, konec). */
 const FLOW_STEPS = [
   [0.6, 1.8],
   [1.8, 4.6],
@@ -399,7 +399,7 @@ class PhoneScreen {
     c.stroke();
     this.check(300, 520, 1, 1.1);
     this.text('Hotovo', 300, 760, 700, 58, APP.text, 'center');
-    this.text('12 z 12 slidů prošlo', 300, 818, 400, 28, APP.muted, 'center');
+    this.text('11 z 11 slidů prošlo', 300, 818, 400, 28, APP.muted, 'center');
   }
 
   drawStatus() {
@@ -584,7 +584,7 @@ class PhoneRig {
       this.mode = p.mode;
       this.drawT = -1;
     }
-    // test od začátku: vždy (slide 7), nebo jen když telefon zrovna přilétá
+    // test od začátku: vždy (slide 6), nebo jen když telefon zrovna přilétá
     if (p.restart === 'always' || (p.restart && appearing)) this.flowT = 0;
   }
 
@@ -593,7 +593,7 @@ class PhoneRig {
   }
 
   tick(dt, t) {
-    // hodiny testu běží pořád (slide 6 posílá impulzy i bez telefonu)
+    // hodiny testu běží pořád (slide 5 posílá impulzy i bez telefonu)
     this.prevFlowT = this.flowT;
     this.flowT = (this.flowT + dt) % FLOW_LEN;
 

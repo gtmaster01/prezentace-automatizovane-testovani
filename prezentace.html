@@ -277,29 +277,7 @@ h3 { font-size: max(14px, calc(var(--u) * 1.75)); font-weight: 660; color: var(-
 .who--human { --who: var(--human); }
 .who--robot { --who: var(--robot); }
 
-/* === SLIDE 5: vývoj (jedna etapa naráz) === */
-.eras { display: grid; margin-top: calc(var(--u) * 0.6); }
-.era {
-  grid-area: 1 / 1;
-  opacity: 0;
-  transform: translate3d(0, 0.9em, 0);
-  transition: opacity 0.55s var(--out), transform 0.9s var(--out);
-}
-.era.is-current { opacity: 1; transform: none; transition-delay: 0.18s; }
-.era.is-past { transform: translate3d(0, -0.7em, 0); }
-.era-when {
-  font-size: calc(var(--u) * 4.4);
-  font-weight: 740;
-  font-stretch: 80%;
-  line-height: 1;
-  letter-spacing: -0.015em;
-  color: var(--ink);
-  margin-bottom: calc(var(--u) * 0.9);
-}
-.era h3 { font-size: calc(var(--u) * 2.4); margin-bottom: calc(var(--u) * 0.6); }
-.era p:last-child { max-width: 34em; }
-
-/* === SLIDE 6: popisky stanic (promítané ze 3D) === */
+/* === SLIDE 5: popisky stanic (promítané ze 3D) === */
 .labels { position: fixed; inset: 0; pointer-events: none; z-index: 3; }
 .tag {
   position: absolute;
@@ -328,10 +306,9 @@ h3 { font-size: max(14px, calc(var(--u) * 1.75)); font-weight: 660; color: var(-
 .tag--station span { display: block; font-size: calc(var(--u) * 1.3); color: var(--ink-2); margin-top: 0.25em; }
 .tag--bar { font-size: calc(var(--u) * 1.3); font-weight: 560; color: var(--ink-2); }
 .tag--bar.is-hot { color: var(--fail); }
-.tag--year { font-size: calc(var(--u) * 1.2); font-weight: 560; color: var(--ink-2); translate: -50% 0; }
 .tag--num { font-size: calc(var(--u) * 2.2); font-weight: 740; color: rgba(238, 242, 255, 0.85); translate: -50% -50%; }
 
-/* === SLIDE 7: kód === */
+/* === SLIDE 6: kód === */
 .code {
   font-family: var(--mono);
   font-size: max(11px, calc(var(--u) * 1.12));
@@ -393,7 +370,7 @@ h3 { font-size: max(14px, calc(var(--u) * 1.75)); font-weight: 660; color: var(-
 .verdict svg { width: 1.1em; height: 1.1em; }
 .verdict.is-on { opacity: 1; transform: none; }
 
-/* === SLIDE 8: video v telefonu === */
+/* === SLIDE 7: video v telefonu === */
 .device {
   position: absolute;
   right: calc(var(--u) * 11);
@@ -486,7 +463,7 @@ h3 { font-size: max(14px, calc(var(--u) * 1.75)); font-weight: 660; color: var(-
   transform: translateY(-0.25em) rotate(-45deg);
 }
 
-/* === SLIDE 9: noční směna === */
+/* === SLIDE 8: noční směna === */
 .clock {
   font-size: calc(var(--u) * 6.4);
   font-weight: 300;
@@ -526,7 +503,7 @@ h3 { font-size: max(14px, calc(var(--u) * 1.75)); font-weight: 660; color: var(-
 .report-rows .is-fail b { color: var(--fail); }
 .report p { font-size: calc(var(--u) * 1.3); color: var(--ink-2); margin-top: calc(var(--u) * 1.2); padding-top: calc(var(--u) * 1); border-top: 1px solid var(--line); }
 
-/* === SLIDE 10: den testera === */
+/* === SLIDE 9: den testera === */
 .day { list-style: none; display: grid; gap: calc(var(--u) * 0.2); margin-top: calc(var(--u) * 0.4); }
 .day li {
   display: grid;
@@ -547,7 +524,7 @@ h3 { font-size: max(14px, calc(var(--u) * 1.75)); font-weight: 660; color: var(-
 .day p { min-height: 0; overflow: hidden; opacity: 0; transition: opacity 0.35s ease; padding-top: calc(var(--u) * 0.25); }
 .day li.is-current p { opacity: 1; transition-delay: 0.15s; }
 
-/* === SLIDE 11: jak začít === */
+/* === SLIDE 10: jak začít === */
 .steps { list-style: none; display: grid; gap: calc(var(--u) * 1.35); }
 .steps li { display: grid; grid-template-columns: calc(var(--u) * 3.6) 1fr; align-items: start; }
 .steps .n {
@@ -674,7 +651,7 @@ body.show-help .help { opacity: 1; pointer-events: auto; }
 .blackout { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; z-index: 30; }
 body.is-black .blackout { opacity: 1; }
 
-/* === BEZ 3D (WebGL nejde): stanice ze slidu 6 jako obyčejná řada === */
+/* === BEZ 3D (WebGL nejde): stanice ze slidu 5 jako obyčejná řada === */
 body.no-webgl .slide[data-act="pipeline"] .anchors {
   display: flex;
   position: absolute;
@@ -788,56 +765,7 @@ body.no-webgl .slide[data-act="pipeline"] .tag { position: static; opacity: 1; t
     </aside>
   </section>
 
-  <!-- ============ 5. VÝVOJ ============ -->
-  <section class="slide" data-act="timeline" data-steps="5" data-time="90">
-    <div class="col">
-      <h2 class="title" data-split>Jak se testování vyvíjelo</h2>
-      <div class="eras reveal" style="--d:4">
-        <article class="era" data-step="0">
-          <p class="era-when">Odjakživa</p>
-          <h3>Ruční testování</h3>
-          <p>Člověk, seznam kroků a spousta klikání. Funguje to, ale pomalu.</p>
-        </article>
-        <article class="era" data-step="1">
-          <p class="era-when">90. léta</p>
-          <h3>Nahraj a přehraj</h3>
-          <p>Nástroj si zapamatuje kliknutí a pak je zopakuje. Stačí posunout tlačítko a test je rozbitý.</p>
-        </article>
-        <article class="era" data-step="2">
-          <p class="era-when">2004 a 2012</p>
-          <h3>Testy jako kód</h3>
-          <p>Selenium ovládá webový prohlížeč, Appium mobilní aplikace. Obojí je zdarma a open source.</p>
-        </article>
-        <article class="era" data-step="3">
-          <p class="era-when">Od roku 2010</p>
-          <h3>Testy běží samy</h3>
-          <p>Po každé změně v kódu se spustí automaticky. Na desítkách zařízení najednou.</p>
-        </article>
-        <article class="era" data-step="4">
-          <p class="era-when">Dnes</p>
-          <h3>Pomáhá umělá inteligence</h3>
-          <p>Navrhuje testy, opravuje rozbité kroky a třídí chyby. Rozhoduje pořád člověk.</p>
-        </article>
-      </div>
-    </div>
-    <div class="anchors">
-      <span class="tag tag--year">odjakživa</span>
-      <span class="tag tag--year">90. léta</span>
-      <span class="tag tag--year">2004 a 2012</span>
-      <span class="tag tag--year">od 2010</span>
-      <span class="tag tag--year">dnes</span>
-    </div>
-    <aside class="notes">
-      <ul>
-        <li>Šipkou se posouváš po časové ose (5 zastávek), u každé stačí jedna věta.</li>
-        <li>Nahraj a přehraj: křehké, každá změna obrazovky test rozbila.</li>
-        <li>Selenium vzniklo v roce 2004 pro web, Appium kolem roku 2012 pro mobily. Na Appiu stojí i naše testy.</li>
-        <li>CI/CD: testy se pouští samy po každé změně. Dnes pomáhá AI, ale rozhoduje člověk.</li>
-      </ul>
-    </aside>
-  </section>
-
-  <!-- ============ 6. JAK TO FUNGUJE ============ -->
+  <!-- ============ 5. JAK TO FUNGUJE ============ -->
   <section class="slide" data-act="pipeline" data-steps="4" data-time="90">
     <div class="top">
       <h2 class="title" data-split>Jak to funguje</h2>
@@ -859,7 +787,7 @@ body.no-webgl .slide[data-act="pipeline"] .tag { position: static; opacity: 1; t
     </aside>
   </section>
 
-  <!-- ============ 7. JAK VYPADÁ TEST ============ -->
+  <!-- ============ 6. JAK VYPADÁ TEST ============ -->
   <section class="slide" data-act="code" data-time="75">
     <div class="col col--wide">
       <h2 class="title" data-split>Jak vypadá test</h2>
@@ -882,7 +810,7 @@ body.no-webgl .slide[data-act="pipeline"] .tag { position: static; opacity: 1; t
     </aside>
   </section>
 
-  <!-- ============ 8. UKÁZKA Z PRAXE (video) ============ -->
+  <!-- ============ 7. UKÁZKA Z PRAXE (video) ============ -->
   <section class="slide" data-act="video" data-time="120" id="videoSlide">
     <div class="col">
       <h2 class="title" data-split>Ukázka z praxe</h2>
@@ -913,7 +841,7 @@ body.no-webgl .slide[data-act="pipeline"] .tag { position: static; opacity: 1; t
     </aside>
   </section>
 
-  <!-- ============ 9. NOČNÍ SMĚNA ============ -->
+  <!-- ============ 8. NOČNÍ SMĚNA ============ -->
   <section class="slide" data-act="farm" data-time="60" id="farmSlide">
     <div class="col">
       <h2 class="title" data-split>Noční směna</h2>
@@ -942,7 +870,7 @@ body.no-webgl .slide[data-act="pipeline"] .tag { position: static; opacity: 1; t
     </aside>
   </section>
 
-  <!-- ============ 10. DEN TESTERA ============ -->
+  <!-- ============ 9. DEN TESTERA ============ -->
   <section class="slide" data-act="day" data-steps="6" data-time="105">
     <div class="col">
       <h2 class="title" data-split>Den automatizovaného testera</h2>
@@ -965,7 +893,7 @@ body.no-webgl .slide[data-act="pipeline"] .tag { position: static; opacity: 1; t
     </aside>
   </section>
 
-  <!-- ============ 11. JAK ZAČÍT ============ -->
+  <!-- ============ 10. JAK ZAČÍT ============ -->
   <section class="slide" data-act="stairs" data-time="60">
     <div class="col">
       <h2 class="title" data-split>Chcete to zkusit? Jak začít</h2>
@@ -990,7 +918,7 @@ body.no-webgl .slide[data-act="pipeline"] .tag { position: static; opacity: 1; t
     </aside>
   </section>
 
-  <!-- ============ 12. DÍKY ============ -->
+  <!-- ============ 11. DÍKY ============ -->
   <section class="slide" data-act="finale" data-time="45">
     <div class="col col--title">
       <h1 class="display" data-split>Díky!</h1>
@@ -5549,7 +5477,7 @@ function keyframes(frames, t, easing = ease.inOutCubic) {
    kamerou a přebarví oblohu; akty se samy vynoří a zmizí.
    ========================================================================== */
 
-/** Nálady oblohy. Den testera (slide 10) mezi nimi přechází podle hodin. */
+/** Nálady oblohy. Den testera (slide 9) mezi nimi přechází podle hodin. */
 const PALETTES = {
   night: { top: '#020309', mid: '#070d2c', bottom: '#010206', glow: '#1a2870', glowAmt: 0.42, sunAmt: 0, stars: 1 },
   // svítání na konci noční směny: jen teplý pruh u obzoru, nebe zůstává tmavé
@@ -5873,7 +5801,6 @@ class Engine {
       title: TitleAct,
       bars: BarsAct,
       wall: WallAct,
-      timeline: TimelineAct,
       pipeline: PipelineAct,
       code: CodeAct,
       video: VideoAct,
@@ -6118,7 +6045,7 @@ function canvasTexture(cv, aniso = 8) {
    TELEFON — 3D model a simulovaná bankovní aplikace na displeji
    Displej je 2D canvas (návrh v souřadnicích 600 × 1290) použitý jako
    textura. Celý průchod testem je čistá funkce času t ∈ <0, FLOW_LEN),
-   takže se s ním dá synchronizovat kód na slidu 7 i impulzy na slidu 6.
+   takže se s ním dá synchronizovat kód na slidu 6 i impulzy na slidu 5.
    ========================================================================== */
 
 const FLOW_LEN = 9.6;
@@ -6130,7 +6057,7 @@ const TAPS = [
   { t: 5.05, x: 300, y: 1136 }, // „Odeslat platbu“
   { t: 8.15, x: 300, y: 1136 }, // „Hotovo“
 ];
-/** Kroky testu (shodné s runStep na slidu 7): [začátek, konec). */
+/** Kroky testu (shodné s runStep na slidu 6): [začátek, konec). */
 const FLOW_STEPS = [
   [0.6, 1.8],
   [1.8, 4.6],
@@ -6515,7 +6442,7 @@ class PhoneScreen {
     c.stroke();
     this.check(300, 520, 1, 1.1);
     this.text('Hotovo', 300, 760, 700, 58, APP.text, 'center');
-    this.text('12 z 12 slidů prošlo', 300, 818, 400, 28, APP.muted, 'center');
+    this.text('11 z 11 slidů prošlo', 300, 818, 400, 28, APP.muted, 'center');
   }
 
   drawStatus() {
@@ -6700,7 +6627,7 @@ class PhoneRig {
       this.mode = p.mode;
       this.drawT = -1;
     }
-    // test od začátku: vždy (slide 7), nebo jen když telefon zrovna přilétá
+    // test od začátku: vždy (slide 6), nebo jen když telefon zrovna přilétá
     if (p.restart === 'always' || (p.restart && appearing)) this.flowT = 0;
   }
 
@@ -6709,7 +6636,7 @@ class PhoneRig {
   }
 
   tick(dt, t) {
-    // hodiny testu běží pořád (slide 6 posílá impulzy i bez telefonu)
+    // hodiny testu běží pořád (slide 5 posílá impulzy i bez telefonu)
     this.prevFlowT = this.flowT;
     this.flowT = (this.flowT + dt) % FLOW_LEN;
 
@@ -7023,182 +6950,7 @@ class WallAct extends Act {
   }
 }
 
-/* --- 5. VÝVOJ: světelná dráha s pěti zastávkami --- */
-function eraIcon(i) {
-  const cv = document.createElement('canvas');
-  cv.width = cv.height = 256;
-  const c = cv.getContext('2d');
-  c.strokeStyle = c.fillStyle = '#eef2ff';
-  c.lineWidth = 13;
-  c.lineCap = 'round';
-  c.lineJoin = 'round';
-  c.translate(128, 128);
-  c.beginPath();
-  if (i === 0) {
-    // seznam kroků (ruční testování)
-    c.roundRect(-62, -78, 124, 156, 18);
-    c.stroke();
-    c.beginPath();
-    c.lineWidth = 11;
-    for (let k = 0; k < 3; k++) {
-      const y = -34 + k * 38;
-      c.moveTo(-36, y);
-      c.lineTo(-27, y + 9);
-      c.lineTo(-12, y - 9);
-      c.moveTo(8, y);
-      c.lineTo(38, y);
-    }
-    c.stroke();
-  } else if (i === 1) {
-    // nahrávání + přehrání
-    c.arc(-40, 0, 30, 0, Math.PI * 2);
-    c.fill();
-    c.beginPath();
-    c.moveTo(14, -42);
-    c.lineTo(72, 0);
-    c.lineTo(14, 42);
-    c.closePath();
-    c.stroke();
-  } else if (i === 2) {
-    // </> kód
-    c.moveTo(-42, -50);
-    c.lineTo(-86, 0);
-    c.lineTo(-42, 50);
-    c.moveTo(42, -50);
-    c.lineTo(86, 0);
-    c.lineTo(42, 50);
-    c.moveTo(16, -68);
-    c.lineTo(-16, 68);
-    c.stroke();
-  } else if (i === 3) {
-    // nekonečná smyčka (CI/CD)
-    for (let k = 0; k <= 120; k++) {
-      const a = (k / 120) * Math.PI * 2, s = Math.sin(a), d = 1 + s * s;
-      const x = (86 * Math.cos(a)) / d, y = (86 * s * Math.cos(a)) / d;
-      if (k) c.lineTo(x, y);
-      else c.moveTo(x, y);
-    }
-    c.closePath();
-    c.stroke();
-  } else {
-    // jiskra (AI)
-    const star = (x, y, r) => {
-      c.moveTo(x, y - r);
-      c.quadraticCurveTo(x + r * 0.14, y - r * 0.14, x + r, y);
-      c.quadraticCurveTo(x + r * 0.14, y + r * 0.14, x, y + r);
-      c.quadraticCurveTo(x - r * 0.14, y + r * 0.14, x - r, y);
-      c.quadraticCurveTo(x - r * 0.14, y - r * 0.14, x, y - r);
-    };
-    star(-14, 12, 72);
-    star(58, -56, 28);
-    c.fill();
-  }
-  return canvasTexture(cv, 4);
-}
-
-class TimelineAct extends Act {
-  constructor(e) {
-    super(e);
-    const P = [
-      [-1.85, -1.25, 0.3],
-      [-0.95, -0.5, -0.25],
-      [0.0, 0.12, 0.25],
-      [0.95, 0.72, -0.25],
-      [1.85, 1.15, 0.2],
-    ].map((a) => new THREE.Vector3(...a));
-    this.curve = new THREE.CatmullRomCurve3(P, false, 'centripetal');
-    this.us = P.map((p) => closestU(this.curve, p));
-    this.tubeU = {
-      uProg: { value: 0 },
-      uAmt: { value: 0 },
-      uDim: { value: new THREE.Color('#33418a') },
-      uLit: { value: new THREE.Color('#6ea8ff').multiplyScalar(1.7) },
-      uHead: { value: new THREE.Color('#ffd49a').multiplyScalar(3.2) },
-    };
-    const tube = new THREE.Mesh(
-      new THREE.TubeGeometry(this.curve, 500, 0.018, 8, false),
-      new THREE.ShaderMaterial({
-        uniforms: this.tubeU,
-        transparent: true,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        vertexShader: /* glsl */ `
-          varying float vU;
-          void main() { vU = uv.x; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-        fragmentShader: /* glsl */ `
-          uniform float uProg, uAmt;
-          uniform vec3 uDim, uLit, uHead;
-          varying float vU;
-          void main() {
-            float lit = 1.0 - smoothstep(uProg - 0.002, uProg + 0.002, vU);
-            vec3 c = mix(uDim * 0.55, uLit, lit) + uHead * exp(-abs(vU - uProg) * 70.0);
-            gl_FragColor = vec4(c, uAmt);
-          }`,
-      })
-    );
-    this.group.add(tube);
-    this.nodes = P.map((p, i) => {
-      const n = new THREE.Group();
-      n.position.copy(p);
-      const halo = glowSprite('#ffc27a', 1.2, 1.7, 0);
-      halo.position.z = -0.02;
-      const disc = new THREE.Mesh(new THREE.CircleGeometry(0.33, 64), new THREE.MeshBasicMaterial({ color: '#0a1233', transparent: true, depthWrite: false }));
-      const icon = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.42), new THREE.MeshBasicMaterial({ map: eraIcon(i), transparent: true, depthWrite: false }));
-      icon.position.z = 0.003;
-      const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(0.35, 0.013, 8, 96),
-        new THREE.MeshBasicMaterial({ color: '#6ea8ff', transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })
-      );
-      ring.position.z = 0.005;
-      n.add(halo, disc, icon, ring);
-      this.group.add(n);
-      return { n, halo, disc, icon, ring, k: 0, cur: 0 };
-    });
-    this.spark = glowSprite('#ffd49a', 2.2, 0.55, 0);
-    this.group.add(this.spark);
-    this.group.position.set(0.9, -0.05, 0);
-    this.prog = 0;
-    this.cA = new THREE.Color('#ffc27a').multiplyScalar(2.2);
-    this.cB = new THREE.Color('#6ea8ff').multiplyScalar(1.5);
-    this.cC = new THREE.Color('#5a6aa8');
-    e.takeLabels('timeline').forEach((el, i) => {
-      const node = this.nodes[i];
-      node.label = e.addLabel(el, this, (v) => v.set(0, -0.58, 0).applyMatrix4(node.n.matrixWorld));
-    });
-  }
-  onEnter() {
-    this.prog = this.dir < 0 ? this.us[this.step] : 0;
-  }
-  shot() {
-    const n = this.nodes[this.step].n.position;
-    return { pos: [0.35 + n.x * 0.1, 0.4 + n.y * 0.1, 9.3], target: [-1.55 + n.x * 0.1, n.y * 0.12, 0] };
-  }
-  update(dt, t) {
-    const p = ease.outCubic(this.p);
-    this.prog = damp(this.prog, this.us[this.step], 2.4, dt);
-    this.tubeU.uProg.value = this.prog;
-    this.tubeU.uAmt.value = p;
-    this.curve.getPointAt(clamp(this.prog, 0, 1), this.spark.position);
-    this.spark.material.opacity = p;
-    const cam = this.e.camera;
-    this.nodes.forEach((n, i) => {
-      const reached = this.prog >= this.us[i] - 0.015;
-      n.k = damp(n.k, i === this.step && reached ? 1 : reached ? 0.6 : 0.22, 6, dt);
-      n.cur = damp(n.cur, i === this.step && reached ? 1 : 0, 6, dt);
-      n.n.quaternion.copy(cam.quaternion);
-      const pulse = 1 + n.cur * 0.06 * Math.sin(t * 3);
-      n.n.scale.setScalar((0.82 + n.cur * 0.3) * pulse * (0.6 + 0.4 * p));
-      n.ring.material.color.copy(this.cC).lerp(this.cB, clamp(n.k * 1.6 - 0.4, 0, 1)).lerp(this.cA, n.cur);
-      n.ring.material.opacity = (0.35 + 0.65 * n.k) * p;
-      n.icon.material.opacity = (0.25 + 0.75 * n.k) * p;
-      n.disc.material.opacity = 0.9 * p;
-      n.halo.material.opacity = n.cur * 0.55 * p;
-      if (n.label) n.label.vis = 0.35 + 0.65 * n.k;
-    });
-  }
-}
-
-/* --- 6. JAK TO FUNGUJE: test → Appium → telefon → výsledek --- */
+/* --- 5. JAK TO FUNGUJE: test → Appium → telefon → výsledek --- */
 function codePanelTexture() {
   const cv = document.createElement('canvas');
   cv.width = 760;
@@ -7457,7 +7209,7 @@ class PipelineAct extends Act {
   }
 }
 
-/* --- 7. JAK VYPADÁ TEST: telefon vpravo, kód vlevo (HTML) --- */
+/* --- 6. JAK VYPADÁ TEST: telefon vpravo, kód vlevo (HTML) --- */
 class CodeAct extends Act {
   constructor(e) {
     super(e);
@@ -7476,7 +7228,7 @@ class CodeAct extends Act {
   }
 }
 
-/* --- 8. UKÁZKA: jen prstence za skutečným videem (HTML) --- */
+/* --- 7. UKÁZKA: jen prstence za skutečným videem (HTML) --- */
 class VideoAct extends Act {
   constructor(e) {
     super(e);
@@ -7500,7 +7252,7 @@ class VideoAct extends Act {
   }
 }
 
-/* --- 9. NOČNÍ SMĚNA: farma telefonů, zrychlená noc, ranní report --- */
+/* --- 8. NOČNÍ SMĚNA: farma telefonů, zrychlená noc, ranní report --- */
 class FarmAct extends Act {
   constructor(e) {
     super(e);
@@ -7609,7 +7361,7 @@ class FarmAct extends Act {
   }
 }
 
-/* --- 10. DEN TESTERA: ciferník 24 h, slunce jede podle kroků --- */
+/* --- 9. DEN TESTERA: ciferník 24 h, slunce jede podle kroků --- */
 class DayAct extends Act {
   constructor(e) {
     super(e);
@@ -7685,7 +7437,7 @@ class DayAct extends Act {
   }
 }
 
-/* --- 11. JAK ZAČÍT: čtyři schody, světélko po nich vyskáče nahoru --- */
+/* --- 10. JAK ZAČÍT: čtyři schody, světélko po nich vyskáče nahoru --- */
 class StairsAct extends Act {
   constructor(e) {
     super(e);
@@ -7764,7 +7516,7 @@ class StairsAct extends Act {
   }
 }
 
-/* --- 12. DÍKY: telefon s fajfkou a vlny jako tep --- */
+/* --- 11. DÍKY: telefon s fajfkou a vlny jako tep --- */
 class FinaleAct extends Act {
   constructor(e) {
     super(e);

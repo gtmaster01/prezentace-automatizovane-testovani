@@ -268,182 +268,7 @@ class WallAct extends Act {
   }
 }
 
-/* --- 5. VÝVOJ: světelná dráha s pěti zastávkami --- */
-function eraIcon(i) {
-  const cv = document.createElement('canvas');
-  cv.width = cv.height = 256;
-  const c = cv.getContext('2d');
-  c.strokeStyle = c.fillStyle = '#eef2ff';
-  c.lineWidth = 13;
-  c.lineCap = 'round';
-  c.lineJoin = 'round';
-  c.translate(128, 128);
-  c.beginPath();
-  if (i === 0) {
-    // seznam kroků (ruční testování)
-    c.roundRect(-62, -78, 124, 156, 18);
-    c.stroke();
-    c.beginPath();
-    c.lineWidth = 11;
-    for (let k = 0; k < 3; k++) {
-      const y = -34 + k * 38;
-      c.moveTo(-36, y);
-      c.lineTo(-27, y + 9);
-      c.lineTo(-12, y - 9);
-      c.moveTo(8, y);
-      c.lineTo(38, y);
-    }
-    c.stroke();
-  } else if (i === 1) {
-    // nahrávání + přehrání
-    c.arc(-40, 0, 30, 0, Math.PI * 2);
-    c.fill();
-    c.beginPath();
-    c.moveTo(14, -42);
-    c.lineTo(72, 0);
-    c.lineTo(14, 42);
-    c.closePath();
-    c.stroke();
-  } else if (i === 2) {
-    // </> kód
-    c.moveTo(-42, -50);
-    c.lineTo(-86, 0);
-    c.lineTo(-42, 50);
-    c.moveTo(42, -50);
-    c.lineTo(86, 0);
-    c.lineTo(42, 50);
-    c.moveTo(16, -68);
-    c.lineTo(-16, 68);
-    c.stroke();
-  } else if (i === 3) {
-    // nekonečná smyčka (CI/CD)
-    for (let k = 0; k <= 120; k++) {
-      const a = (k / 120) * Math.PI * 2, s = Math.sin(a), d = 1 + s * s;
-      const x = (86 * Math.cos(a)) / d, y = (86 * s * Math.cos(a)) / d;
-      if (k) c.lineTo(x, y);
-      else c.moveTo(x, y);
-    }
-    c.closePath();
-    c.stroke();
-  } else {
-    // jiskra (AI)
-    const star = (x, y, r) => {
-      c.moveTo(x, y - r);
-      c.quadraticCurveTo(x + r * 0.14, y - r * 0.14, x + r, y);
-      c.quadraticCurveTo(x + r * 0.14, y + r * 0.14, x, y + r);
-      c.quadraticCurveTo(x - r * 0.14, y + r * 0.14, x - r, y);
-      c.quadraticCurveTo(x - r * 0.14, y - r * 0.14, x, y - r);
-    };
-    star(-14, 12, 72);
-    star(58, -56, 28);
-    c.fill();
-  }
-  return canvasTexture(cv, 4);
-}
-
-class TimelineAct extends Act {
-  constructor(e) {
-    super(e);
-    const P = [
-      [-1.85, -1.25, 0.3],
-      [-0.95, -0.5, -0.25],
-      [0.0, 0.12, 0.25],
-      [0.95, 0.72, -0.25],
-      [1.85, 1.15, 0.2],
-    ].map((a) => new THREE.Vector3(...a));
-    this.curve = new THREE.CatmullRomCurve3(P, false, 'centripetal');
-    this.us = P.map((p) => closestU(this.curve, p));
-    this.tubeU = {
-      uProg: { value: 0 },
-      uAmt: { value: 0 },
-      uDim: { value: new THREE.Color('#33418a') },
-      uLit: { value: new THREE.Color('#6ea8ff').multiplyScalar(1.7) },
-      uHead: { value: new THREE.Color('#ffd49a').multiplyScalar(3.2) },
-    };
-    const tube = new THREE.Mesh(
-      new THREE.TubeGeometry(this.curve, 500, 0.018, 8, false),
-      new THREE.ShaderMaterial({
-        uniforms: this.tubeU,
-        transparent: true,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        vertexShader: /* glsl */ `
-          varying float vU;
-          void main() { vU = uv.x; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-        fragmentShader: /* glsl */ `
-          uniform float uProg, uAmt;
-          uniform vec3 uDim, uLit, uHead;
-          varying float vU;
-          void main() {
-            float lit = 1.0 - smoothstep(uProg - 0.002, uProg + 0.002, vU);
-            vec3 c = mix(uDim * 0.55, uLit, lit) + uHead * exp(-abs(vU - uProg) * 70.0);
-            gl_FragColor = vec4(c, uAmt);
-          }`,
-      })
-    );
-    this.group.add(tube);
-    this.nodes = P.map((p, i) => {
-      const n = new THREE.Group();
-      n.position.copy(p);
-      const halo = glowSprite('#ffc27a', 1.2, 1.7, 0);
-      halo.position.z = -0.02;
-      const disc = new THREE.Mesh(new THREE.CircleGeometry(0.33, 64), new THREE.MeshBasicMaterial({ color: '#0a1233', transparent: true, depthWrite: false }));
-      const icon = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.42), new THREE.MeshBasicMaterial({ map: eraIcon(i), transparent: true, depthWrite: false }));
-      icon.position.z = 0.003;
-      const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(0.35, 0.013, 8, 96),
-        new THREE.MeshBasicMaterial({ color: '#6ea8ff', transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })
-      );
-      ring.position.z = 0.005;
-      n.add(halo, disc, icon, ring);
-      this.group.add(n);
-      return { n, halo, disc, icon, ring, k: 0, cur: 0 };
-    });
-    this.spark = glowSprite('#ffd49a', 2.2, 0.55, 0);
-    this.group.add(this.spark);
-    this.group.position.set(0.9, -0.05, 0);
-    this.prog = 0;
-    this.cA = new THREE.Color('#ffc27a').multiplyScalar(2.2);
-    this.cB = new THREE.Color('#6ea8ff').multiplyScalar(1.5);
-    this.cC = new THREE.Color('#5a6aa8');
-    e.takeLabels('timeline').forEach((el, i) => {
-      const node = this.nodes[i];
-      node.label = e.addLabel(el, this, (v) => v.set(0, -0.58, 0).applyMatrix4(node.n.matrixWorld));
-    });
-  }
-  onEnter() {
-    this.prog = this.dir < 0 ? this.us[this.step] : 0;
-  }
-  shot() {
-    const n = this.nodes[this.step].n.position;
-    return { pos: [0.35 + n.x * 0.1, 0.4 + n.y * 0.1, 9.3], target: [-1.55 + n.x * 0.1, n.y * 0.12, 0] };
-  }
-  update(dt, t) {
-    const p = ease.outCubic(this.p);
-    this.prog = damp(this.prog, this.us[this.step], 2.4, dt);
-    this.tubeU.uProg.value = this.prog;
-    this.tubeU.uAmt.value = p;
-    this.curve.getPointAt(clamp(this.prog, 0, 1), this.spark.position);
-    this.spark.material.opacity = p;
-    const cam = this.e.camera;
-    this.nodes.forEach((n, i) => {
-      const reached = this.prog >= this.us[i] - 0.015;
-      n.k = damp(n.k, i === this.step && reached ? 1 : reached ? 0.6 : 0.22, 6, dt);
-      n.cur = damp(n.cur, i === this.step && reached ? 1 : 0, 6, dt);
-      n.n.quaternion.copy(cam.quaternion);
-      const pulse = 1 + n.cur * 0.06 * Math.sin(t * 3);
-      n.n.scale.setScalar((0.82 + n.cur * 0.3) * pulse * (0.6 + 0.4 * p));
-      n.ring.material.color.copy(this.cC).lerp(this.cB, clamp(n.k * 1.6 - 0.4, 0, 1)).lerp(this.cA, n.cur);
-      n.ring.material.opacity = (0.35 + 0.65 * n.k) * p;
-      n.icon.material.opacity = (0.25 + 0.75 * n.k) * p;
-      n.disc.material.opacity = 0.9 * p;
-      n.halo.material.opacity = n.cur * 0.55 * p;
-      if (n.label) n.label.vis = 0.35 + 0.65 * n.k;
-    });
-  }
-}
-
-/* --- 6. JAK TO FUNGUJE: test → Appium → telefon → výsledek --- */
+/* --- 5. JAK TO FUNGUJE: test → Appium → telefon → výsledek --- */
 function codePanelTexture() {
   const cv = document.createElement('canvas');
   cv.width = 760;
@@ -702,7 +527,7 @@ class PipelineAct extends Act {
   }
 }
 
-/* --- 7. JAK VYPADÁ TEST: telefon vpravo, kód vlevo (HTML) --- */
+/* --- 6. JAK VYPADÁ TEST: telefon vpravo, kód vlevo (HTML) --- */
 class CodeAct extends Act {
   constructor(e) {
     super(e);
@@ -721,7 +546,7 @@ class CodeAct extends Act {
   }
 }
 
-/* --- 8. UKÁZKA: jen prstence za skutečným videem (HTML) --- */
+/* --- 7. UKÁZKA: jen prstence za skutečným videem (HTML) --- */
 class VideoAct extends Act {
   constructor(e) {
     super(e);
@@ -745,7 +570,7 @@ class VideoAct extends Act {
   }
 }
 
-/* --- 9. NOČNÍ SMĚNA: farma telefonů, zrychlená noc, ranní report --- */
+/* --- 8. NOČNÍ SMĚNA: farma telefonů, zrychlená noc, ranní report --- */
 class FarmAct extends Act {
   constructor(e) {
     super(e);
@@ -854,7 +679,7 @@ class FarmAct extends Act {
   }
 }
 
-/* --- 10. DEN TESTERA: ciferník 24 h, slunce jede podle kroků --- */
+/* --- 9. DEN TESTERA: ciferník 24 h, slunce jede podle kroků --- */
 class DayAct extends Act {
   constructor(e) {
     super(e);
@@ -930,7 +755,7 @@ class DayAct extends Act {
   }
 }
 
-/* --- 11. JAK ZAČÍT: čtyři schody, světélko po nich vyskáče nahoru --- */
+/* --- 10. JAK ZAČÍT: čtyři schody, světélko po nich vyskáče nahoru --- */
 class StairsAct extends Act {
   constructor(e) {
     super(e);
@@ -1009,7 +834,7 @@ class StairsAct extends Act {
   }
 }
 
-/* --- 12. DÍKY: telefon s fajfkou a vlny jako tep --- */
+/* --- 11. DÍKY: telefon s fajfkou a vlny jako tep --- */
 class FinaleAct extends Act {
   constructor(e) {
     super(e);

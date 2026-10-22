@@ -4,7 +4,7 @@
    kamerou a přebarví oblohu; akty se samy vynoří a zmizí.
    ========================================================================== */
 
-/** Nálady oblohy. Den testera (slide 10) mezi nimi přechází podle hodin. */
+/** Nálady oblohy. Den testera (slide 9) mezi nimi přechází podle hodin. */
 const PALETTES = {
   night: { top: '#020309', mid: '#070d2c', bottom: '#010206', glow: '#1a2870', glowAmt: 0.42, sunAmt: 0, stars: 1 },
   // svítání na konci noční směny: jen teplý pruh u obzoru, nebe zůstává tmavé
@@ -328,7 +328,6 @@ class Engine {
       title: TitleAct,
       bars: BarsAct,
       wall: WallAct,
-      timeline: TimelineAct,
       pipeline: PipelineAct,
       code: CodeAct,
       video: VideoAct,

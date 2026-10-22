@@ -4,7 +4,7 @@ Patnáctiminutová prezentace pro studenty VŠ o automatizovaném testování mo
 
 **Spuštění:** otevři `prezentace.html` dvojklikem (Chrome nebo Edge). F = celá obrazovka, N = poznámky a časomíra, H = nápověda.
 
-**Video z praxe:** ulož ho jako `video/ukazka.mp4`, nebo ho na slidu 8 přetáhni myší do okna. Do gitu se video necommituje (`.gitignore`).
+**Video z praxe:** ulož ho jako `video/ukazka.mp4`, nebo ho na slidu 7 přetáhni myší do okna. Do gitu se video necommituje (`.gitignore`).
 
 Podrobnosti: [`JAK-NA-TO.txt`](JAK-NA-TO.txt) (prezentování, časový plán), [`_zdroj/README.txt`](_zdroj/README.txt) (struktura a sestavení).
 
